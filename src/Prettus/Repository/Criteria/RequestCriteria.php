@@ -95,7 +95,17 @@ class RequestCriteria implements CriteriaInterface
                                 });
                             } else {
                                 if (in_array($field, $dateFieldsSearchable)) {
-                                    $query->whereDate($modelTableName.'.'.$field, $condition, $value);
+                                    if ($condition === 'between') {
+                                        $values = explode(',', $value);
+                                        if (isset($values[0])) {
+                                            $query->whereDate($field, '>=', $values[0]);
+                                        }
+                                        if (isset($values[1])) {
+                                            $query->whereDate($field, '<=', $values[1]);
+                                        }
+                                    } else {
+                                        $query->whereDate($field, $condition, $value);
+                                    }
                                 } else {
                                     $query->where($modelTableName.'.'.$field, $condition, $value);
                                 }
